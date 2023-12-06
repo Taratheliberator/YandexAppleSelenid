@@ -62,22 +62,31 @@ public class YandexPage {
         return noteList;
     }
 
+    public void loadAllSmartphones() throws InterruptedException {
+        int loadedSmartphonesCount = 0;
 
-    public void loadAllSmartphones() {
         while (true) {
-            ElementsCollection buttons = $$("button[data-auto='pager-more']").filter(Condition.visible);
-            if (buttons.isEmpty()) {
+            // Проверяем наличие и видимость кнопки "Показать еще"
+            ElementsCollection showMoreButtons = $$("button[data-auto='pager-more']").filter(Condition.visible);
+
+            if (showMoreButtons.isEmpty()) {
+                System.out.println("Достигнут конец списка. Всего загружено смартфонов: " + loadedSmartphonesCount);
                 break;
             }
-            buttons.first().click();
-            // Add appropriate wait or sleep here if necessary to allow for loading
+
+            // Нажимаем на кнопку "Показать еще"
+            showMoreButtons.first().click();
+
+            // Ждем, пока новые элементы загрузятся
+            Thread.sleep(1000); // Это пример, лучше использовать явное ожидание.
+
+            // Обновляем количество загруженных смартфонов
+            ElementsCollection noteList = $$x("//*[@data-autotest-id='offer-snippet' or @data-autotest-id='product-snippet']");
+            loadedSmartphonesCount = noteList.size();
+
+            System.out.println("Загружено смартфонов на текущий момент: " + loadedSmartphonesCount);
         }
     }
-
-
-
-
-
 
     public static boolean isSmartphoneValid(String element) {
         String lowerCaseElement = element.toLowerCase();
